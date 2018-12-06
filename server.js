@@ -8,7 +8,11 @@ const server = Hapi.server({
   port: 8000
 });
 
+const routes = {};
+routes.tasks = require("./routes/tasks");
+
 //Adding a route
+
 server.route({
   method: "GET",
   path: "/",
@@ -16,6 +20,8 @@ server.route({
     return { message: "hello from hapi" };
   }
 });
+// loading other routes
+server.route(routes.tasks);
 const options = {
   ops: {
     interval: 100000
