@@ -1,4 +1,5 @@
 const Hapi = require("hapi");
+const good = require("good");
 
 //creating server with a host and port
 
@@ -15,9 +16,22 @@ server.route({
     return { message: "hello from hapi" };
   }
 });
+const options = {
+  ops: {
+    interval: 100000
+  },
+  reporters: {
+    consoleReporters: [{ module: "good-console" }, "stdout"]
+  }
+};
 
-//starting the server
 const init = async () => {
+  await server.register({
+    plugin: require("good"),
+    options
+  });
+
+  //starting the server
   await server.start();
   console.log(`Server is running at: ${server.info.uri}`);
 };
