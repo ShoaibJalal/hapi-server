@@ -56,5 +56,21 @@ module.exports = [
       tasksList[index] = request.payload;
       return { message: "Task Updated." };
     }
+  },
+  {
+    method: "PATCH",
+    path: "/tasks/{id}",
+    handler: (request, h) => {
+      const index = request.params.id - 1;
+      // task to be patched
+      const task = tasksList[index];
+      // for each key provided, update on the resource
+      Object.keys(request.payload).forEach(key => {
+        if (key in task) {
+          task[key] = request.payload[key];
+        }
+      });
+      return { message: "Task patched" };
+    }
   }
 ];
