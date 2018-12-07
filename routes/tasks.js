@@ -37,5 +37,14 @@ module.exports = [
       if (tasksList[id]) return tasksList[id];
       return { message: "Not found" }.code(404);
     }
+  },
+  {
+    method: "POST",
+    path: "/tasks",
+    handler: (request, h) => {
+      const task = request.payload;
+      tasksList.push(task);
+      return { message: "Task created" };
+    }
   }
 ];
