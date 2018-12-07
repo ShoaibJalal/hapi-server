@@ -1,12 +1,25 @@
 # hapi-server
+
 Creating basic Node.js server with Hapi framework
 
 This is an app where client can perform CRUD operations on backend.
 
-Routes exist on API...:
---
+## Routes exist on API...:
+
+GET
 http://localhost:8000/
 --
+GET
 http://localhost:8000/tasks
 --
-http://localhost:8000/tasks/id   id: should be an integer number.
+GET specific task
+http://localhost:8000/tasks/id id: should be an integer number.
+--
+POST
+http://localhost:8000/tasks
+--
+PUT
+http://localhost:8000/tasks/id id: should be an integer number.
+--
+Patch
+http://localhost:8000/tasks/id id: should be an integer number.

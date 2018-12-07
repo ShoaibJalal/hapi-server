@@ -46,5 +46,15 @@ module.exports = [
       tasksList.push(task);
       return { message: "Task created" };
     }
+  },
+  {
+    method: "PUT",
+    path: "/tasks/{id}",
+    handler: (request, h) => {
+      const index = request.params.id - 1;
+      // replace the whole resource with the new one
+      tasksList[index] = request.payload;
+      return { message: "Task Updated." };
+    }
   }
 ];
