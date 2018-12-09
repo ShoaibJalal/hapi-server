@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const knex = require("../db");
 
-const tasksList = [
+/* const tasksList = [
   {
     title: "Shopping",
     dateCreated: "Dec 6, 2018",
@@ -20,30 +20,35 @@ const tasksList = [
       { text: "Helsinki, Finland", done: false }
     ]
   }
-];
+]; */
 
 module.exports = [
   {
     method: "GET",
-    path: "/tasks",
-    handler: (request, h) => {
-      return tasksList;
+    path: "/task",
+    handler: async (request, h) => {
+      const userId = 1; //hard coded for now
+      const tasks = await knext("task").where("user_id", userId);
+      return tasks;
     }
   },
   {
     method: "GET",
-    path: "/tasks/{id}",
-    handler: (request, h) => {
-      const id = request.params.id - 1; // since array is 0-based index
-      // should return 404 error if item
-      // is not found
-      if (tasksList[id]) return tasksList[id];
-      return { message: "Not found" };
+    path: "/task/{id}",
+    handler: async (request, h) => {
+      const id = request.params.id;
+      const userId = 1;
+      const [task] = await knex("task").where({
+        id: id,
+        user_id: userId
+      });
+      if (task) return task;
+      return { message: "Not found", code: "status code: 404" };
     }
   },
   {
     method: "POST",
-    path: "/tasks",
+    path: "/task",
     handler: async (request, h) => {
       const task = request.payload;
       task.user_id = 1; // Hard coded for now
@@ -64,7 +69,7 @@ module.exports = [
   },
   {
     method: "POST",
-    path: "/tasks/{id}/item",
+    path: "/task/{id}/item",
     handler: async (request, h) => {
       const taskItem = request.payload;
       taskItem.task_id = request.params.id;
@@ -80,8 +85,17 @@ module.exports = [
     }
   },
   {
+    method: "GET",
+    path: "/task/{id}/item",
+    handler: async (request, h) => {
+      const taskId = request.params.id;
+      const items = await knex("task_item").where("task_id", taskId);
+      return items;
+    }
+  },
+  {
     method: "PUT",
-    path: "/tasks/{id}",
+    path: "/task/{id}",
     handler: (request, h) => {
       const index = request.params.id - 1;
       // replace the whole resource with the new one
@@ -91,7 +105,7 @@ module.exports = [
   },
   {
     method: "PATCH",
-    path: "/tasks/{id}",
+    path: "/task/{id}",
     handler: (request, h) => {
       const index = request.params.id - 1;
       // task to be patched
@@ -107,7 +121,7 @@ module.exports = [
   },
   {
     method: "DELETE",
-    path: "/tasks/{id}",
+    path: "/task/{id}",
     handler: (request, h) => {
       const index = request.params.id - 1;
       delete tasksList[index]; // replaces with `undefined`
