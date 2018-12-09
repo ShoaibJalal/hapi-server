@@ -1,3 +1,6 @@
+const Joi = require("joi");
+const knex = require("../db");
+
 const tasksList = [
   {
     title: "Shopping",
@@ -35,16 +38,45 @@ module.exports = [
       // should return 404 error if item
       // is not found
       if (tasksList[id]) return tasksList[id];
-      return { message: "Not found" }.code(404);
+      return { message: "Not found" };
     }
   },
   {
     method: "POST",
     path: "/tasks",
-    handler: (request, h) => {
+    handler: async (request, h) => {
       const task = request.payload;
-      tasksList.push(task);
-      return { message: "Task created" };
+      task.user_id = 1; // Hard coded for now
+      /*using array-destructuring here since the
+         returned result is an array with 1 element */
+      const [taskId] = await knex("task")
+        .returning("id")
+        .insert(task);
+      return { message: "Task created", task_id: taskId };
+    },
+    config: {
+      validate: {
+        payload: {
+          title: Joi.string().required()
+        }
+      }
+    }
+  },
+  {
+    method: "POST",
+    path: "/tasks/{id}/item",
+    handler: async (request, h) => {
+      const taskItem = request.payload;
+      taskItem.task_id = request.params.id;
+      const [id] = await knex("task_item").insert(taskItem);
+      return { message: "Item created", id: id };
+    },
+    config: {
+      validate: {
+        payload: {
+          text: Joi.string().required()
+        }
+      }
     }
   },
   {
@@ -71,6 +103,15 @@ module.exports = [
         }
       });
       return { message: "Task patched" };
+    }
+  },
+  {
+    method: "DELETE",
+    path: "/tasks/{id}",
+    handler: (request, h) => {
+      const index = request.params.id - 1;
+      delete tasksList[index]; // replaces with `undefined`
+      return { message: "Task deleted" };
     }
   }
 ];

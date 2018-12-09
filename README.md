@@ -21,5 +21,8 @@ http://localhost:8000/tasks
 PUT
 http://localhost:8000/tasks/id id: should be an integer number.
 --
-Patch
+PATCH
+http://localhost:8000/tasks/id id: should be an integer number.
+--
+DELETE
 http://localhost:8000/tasks/id id: should be an integer number.
