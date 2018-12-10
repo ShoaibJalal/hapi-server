@@ -7,7 +7,7 @@ module.exports = [
     path: "/task",
     handler: async (request, h) => {
       const userId = 1; //hard coded for now
-      const tasks = await knext("task").where("user_id", userId);
+      const tasks = await knex("task").where("user_id", userId);
       return tasks;
     }
   },
