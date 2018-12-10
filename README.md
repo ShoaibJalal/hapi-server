@@ -10,19 +10,26 @@ GET
 http://localhost:8000/
 --
 GET
-http://localhost:8000/tasks
+http://localhost:8000/task
 --
-GET specific task
-http://localhost:8000/tasks/id id: should be an integer number.
+GET a specific task
+http://localhost:8000/task/1/item id: should be an integer number.
 --
 POST
-http://localhost:8000/tasks
+http://localhost:8000/task
 --
 PUT
-http://localhost:8000/tasks/id id: should be an integer number.
+http://localhost:8000/task/id id: should be an integer number.
 --
 PATCH
-http://localhost:8000/tasks/id id: should be an integer number.
+http://localhost:8000/task/id id: should be an integer number.
+--
+PATCH
+http://localhost:8000/task/id/item/id id: should be an integer number.
+--
+
+DELETE
+http://localhost:8000/task/id id: should be an integer number.
 --
 DELETE
-http://localhost:8000/tasks/id id: should be an integer number.
+http://localhost:8000/task/id/item/id id: should be an integer number.

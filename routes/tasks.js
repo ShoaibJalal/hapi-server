@@ -1,27 +1,6 @@
 const Joi = require("joi");
 const knex = require("../db");
 
-/* const tasksList = [
-  {
-    title: "Shopping",
-    dateCreated: "Dec 6, 2018",
-    list: [
-      { text: "Node.js Books", done: false },
-      { text: "MacBook", done: false },
-      { text: "Food", done: true }
-    ]
-  },
-  {
-    title: "Places to visit",
-    dateCreated: "Aug 12, 2018",
-    list: [
-      { text: "Nairobi, Kenya", done: false },
-      { text: "Moscow, Russia", done: false },
-      { text: "Helsinki, Finland", done: false }
-    ]
-  }
-]; */
-
 module.exports = [
   {
     method: "GET",
@@ -93,39 +72,68 @@ module.exports = [
       return items;
     }
   },
+
   {
-    method: "PUT",
+    method: "PATCH",
     path: "/task/{id}",
-    handler: (request, h) => {
-      const index = request.params.id - 1;
-      // replace the whole resource with the new one
-      tasksList[index] = request.payload;
-      return { message: "Task Updated." };
+    handler: async (request, h) => {
+      const taskId = request.params.id;
+      const title = request.payload.title;
+
+      const patched = await knex("task")
+        .update({ title: title })
+        .where("id", taskId);
+      return { message: "Task patched" };
+    },
+    config: {
+      validate: {
+        payload: {
+          title: Joi.string().required()
+        }
+      }
     }
   },
   {
     method: "PATCH",
-    path: "/task/{id}",
-    handler: (request, h) => {
-      const index = request.params.id - 1;
-      // task to be patched
-      const task = tasksList[index];
-      // for each key provided, update on the resource
-      Object.keys(request.payload).forEach(key => {
-        if (key in task) {
-          task[key] = request.payload[key];
+    path: "/task/{task_id}/item/{id}",
+    handler: async (request, h) => {
+      const itemId = request.params.id;
+      const item = request.payload;
+
+      const patched = await knex("task_item")
+        .update(item)
+        .where("id", itemId);
+      return { message: "Item patched" };
+    },
+    config: {
+      validate: {
+        payload: {
+          text: Joi.string(),
+          done: Joi.boolean()
         }
-      });
-      return { message: "Task patched" };
+      }
     }
   },
   {
     method: "DELETE",
     path: "/task/{id}",
-    handler: (request, h) => {
-      const index = request.params.id - 1;
-      delete tasksList[index]; // replaces with `undefined`
+    handler: async (request, h) => {
+      const id = request.params.id;
+      const deleted = await knex("task")
+        .where("id", id)
+        .delete();
       return { message: "Task deleted" };
+    }
+  },
+  {
+    method: "DELETE",
+    path: "/task/{taskId}/item/{id}",
+    handler: async (request, h) => {
+      const id = request.params.id;
+      const deleted = await knex("task_item")
+        .where("id", id)
+        .delete();
+      return { message: "Item deleted" };
     }
   }
 ];
